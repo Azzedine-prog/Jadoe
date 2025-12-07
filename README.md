@@ -15,7 +15,7 @@ Jadoe CAN Studio is a lightweight, production-style Python desktop application f
 - `app/` – entry point and application wiring.
 - `core/` – business logic for configuration, DBC parsing, and data models.
 - `gui/` – PySide6 user interface components (no CAN logic here).
-- `io/` – CAN backend abstraction and logging/replay utilities.
+- `canio/` – CAN backend abstraction and logging/replay utilities.
 - `tests/` – unit tests for configuration and DBC parsing.
 - `data/` – sample DBC file for demo/testing.
 
@@ -40,4 +40,4 @@ pytest
 
 ## Notes
 - The default CAN configuration targets a virtual bus (`vcan0`) at 500 kbit/s. Adjust via the UI or by editing `core/config.py` defaults.
-- Logging writes CSV files to a local `logs/` directory. Replay logic is available in `io/logger.py` and can be wired to a virtual bus for offline analysis.
+- Logging writes CSV files to a local `logs/` directory. Replay logic is available in `canio/logger.py` and can be wired to a virtual bus for offline analysis.

@@ -11,8 +11,8 @@ from core.config import BusConfig, WorkspaceSettings
 from core.dbc_manager import DbcManager, DbcLoadError
 from core.models import RxBuffer, RxEntry, TxMessageModel
 from gui.main_window import MainWindow
-from io.can_bus import CanBusController, ReceivedMessage
-from io.logger import SessionLogger
+from canio.can_bus import CanBusController, ReceivedMessage
+from canio.logger import SessionLogger
 
 
 class ApplicationController(QtCore.QObject):
