@@ -7,6 +7,7 @@ Jadoe CAN Studio is a lightweight, production-style Python desktop application f
 - Configure CAN backends through `python-can` (virtual, SocketCAN, Vector, etc.).
 - Live RX monitor with decoded signal view and selection-driven signal details.
 - Transmit panel with single-shot and cyclic sending using DBC-defined signals.
+- Interactive generator dock to synthesize traffic similar to CANoe IG, with optional random signal values.
 - Session logging to CSV and basic replay support (logic provided for integration).
 - Dark/light themes via a central `ThemeManager` for modern UI styling.
 - Workspace persistence for last DBC, bus configuration, and layout state.
@@ -31,6 +32,8 @@ Jadoe CAN Studio is a lightweight, production-style Python desktop application f
    python -m app.main
    ```
 3. Use the toolbar to load a DBC, connect to a CAN interface, and start monitoring or transmitting.
+4. Enable the **Interactive Generator** dock to simulate CAN traffic in virtual mode (no hardware required). Select
+   messages and a period, choose whether to randomize signals, and start/stop from the dock or toolbar shortcuts.
 
 ## Testing
 Run the unit tests with pytest:

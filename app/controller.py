@@ -13,6 +13,7 @@ from core.models import RxBuffer, RxEntry, TxMessageModel
 from gui.main_window import MainWindow
 from canio.can_bus import CanBusController, ReceivedMessage
 from canio.logger import SessionLogger
+from canio.virtual import VirtualCanGenerator
 
 
 class ApplicationController(QtCore.QObject):
@@ -26,6 +27,7 @@ class ApplicationController(QtCore.QObject):
         self.logger: Optional[SessionLogger] = None
         self.bus_controller = CanBusController(settings.bus)
         self.bus_controller.set_callback(self.on_message_received)
+        self.virtual_generator = VirtualCanGenerator(self.dbc_manager, self.on_message_received)
         self.cyclic_timers: Dict[str, QtCore.QTimer] = {}
 
         self._connect_ui()
@@ -41,6 +43,8 @@ class ApplicationController(QtCore.QObject):
         self.window.disconnect_requested.connect(self._disconnect_bus)
         self.window.start_logging_requested.connect(self._start_logging)
         self.window.stop_logging_requested.connect(self._stop_logging)
+        self.window.start_virtual_requested.connect(self._start_virtual)
+        self.window.stop_virtual_requested.connect(self._stop_virtual)
         self.window.theme_toggle_requested.connect(self._toggle_theme)
         self.window.tx_panel.send_once.connect(self._send_once)
         self.window.tx_panel.toggle_cyclic.connect(self._handle_cyclic)
@@ -71,6 +75,7 @@ class ApplicationController(QtCore.QObject):
         self.dbc_manager.unload()
         self.window.log_message("DBC unloaded")
         self.window.set_tx_models({})
+        self._stop_virtual()
 
     # Bus handling
     def _connect_bus(self) -> None:
@@ -106,6 +111,24 @@ class ApplicationController(QtCore.QObject):
         )
         if self.logger:
             self.logger.log(message)
+
+    # Virtual generator
+    def _start_virtual(self, period_ms: int, messages: list[str], randomize: bool) -> None:
+        if not self.dbc_manager.loaded:
+            QtWidgets.QMessageBox.warning(self.window, "DBC", "Load a DBC before starting virtual mode")
+            self.window.stop_generator_ui()
+            return
+        self.virtual_generator.start(period_ms, messages, randomize)
+        self.window.set_virtual_status(True)
+        self.window.log_message(
+            f"Virtual generator running every {period_ms} ms for {len(messages) if messages else 'all'} messages"
+        )
+
+    def _stop_virtual(self) -> None:
+        self.virtual_generator.stop()
+        self.window.set_virtual_status(False)
+        self.window.stop_generator_ui()
+        self.window.log_message("Virtual generator stopped")
 
     # Logging
     def _start_logging(self) -> None:
